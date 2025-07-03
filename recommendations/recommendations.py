@@ -6,8 +6,8 @@ import logging
 import sqlite3
 from concurrent import futures
 
-import recommendations_pb2
-import recommendations_pb2_grpc
+# Импортируем из общего сгенерированного пакета
+from common.generated import recommendations_pb2, recommendations_pb2_grpc
 
 # Настройка логирования
 logging.basicConfig(

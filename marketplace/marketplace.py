@@ -1,11 +1,12 @@
+# marketplace/marketplace.py
 import os
 import logging
 from flask import Flask, render_template
 from dotenv import load_dotenv
 import grpc
 
-import recommendations_pb2
-import recommendations_pb2_grpc
+# Импортируем из общего сгенерированного пакета
+from common.generated import recommendations_pb2, recommendations_pb2_grpc
 
 # Загружаем переменные окружения из .env файла для локальной разработки
 load_dotenv()
