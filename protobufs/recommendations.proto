@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+// Категории книг, расширенные до 10 вариантов.
+enum BookCategory {
+  MYSTERY = 0;
+  SCIENCE_FICTION = 1;
+  SELF_HELP = 2;
+  FANTASY = 3;
+  HISTORY = 4;
+  THRILLER = 5;
+  ROMANCE = 6;
+  BIOGRAPHY = 7;
+  POETRY = 8;
+  CLASSICS = 9;
+}
+
+// Запрос на получение рекомендаций.
+message RecommendationRequest {
+  int32 user_id = 1;
+  BookCategory category = 2;
+  int32 max_results = 3;
+}
+
+// Структура данных для одной книги.
+message BookRecommendation {
+  int32 id = 1;
+  string title = 2;
+}
+
+// Ответ, содержащий список книг.
+message RecommendationResponse {
+  repeated BookRecommendation recommendations = 1;
+}
+
+// Описание gRPC сервиса и его методов.
+service Recommendations {
+  rpc Recommend(RecommendationRequest) returns (RecommendationResponse);
+}
