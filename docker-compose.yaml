@@ -1,0 +1,48 @@
+# docker-compose.yaml
+version: "3.9" # Используем более современную версию для поддержки healthcheck
+
+services:
+  # Сервис рекомендаций
+  recommendations:
+    build:
+      context: . # Корень проекта - контекст сборки
+      dockerfile: recommendations/Dockerfile
+    image: recommendations-service:1.0.0 # Используем семантическое версионирование
+    networks:
+      - microservices_net
+    # Production-Ready Комментарий: Healthcheck
+    # Этот healthcheck будет закомментирован, так как требует установки grpc_health_probe
+    # в Docker-образ, что выходит за рамки текущей задачи. В реальном проекте
+    # он необходим для надежного depends_on.
+    # healthcheck:
+    #   test: ["CMD", "grpc_health_probe", "-addr=:50051"]
+    #   interval: 15s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 10s
+    restart: unless-stopped
+
+  # Сервис маркетплейса
+  marketplace:
+    build:
+      context: .
+      dockerfile: marketplace/Dockerfile
+    image: marketplace-service:1.0.0
+    ports:
+      # Пробрасываем порт 5001 контейнера на 5001 хоста
+      - "5001:5001"
+    depends_on:
+      - recommendations # Marketplace стартует после recommendations
+    environment:
+      # Ключевой момент: Docker Compose обеспечивает DNS-разрешение.
+      # Теперь 'recommendations' - это валидное имя хоста внутри сети Docker.
+      RECOMMENDATIONS_HOST: recommendations
+      FLASK_DEBUG: "True" # Для отладки
+    networks:
+      - microservices_net
+    restart: unless-stopped
+
+# Определяем общую сеть для наших сервисов
+networks:
+  microservices_net:
+    driver: bridge
